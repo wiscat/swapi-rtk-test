@@ -1,11 +1,19 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import { setupListeners } from '@reduxjs/toolkit/query';
+
+import peopleReducer from 'features/people/peopleSlice';
+import { swapi } from 'features/api';
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    people: peopleReducer,
+    [swapi.reducerPath]: swapi.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(swapi.middleware),
 });
+
+setupListeners(store.dispatch);
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
